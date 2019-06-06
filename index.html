@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>猪博士APP下载</title>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<script>
+  var Width = window.innerWidth;
+  if (Width > 720) {
+    document.documentElement.style.fontSize = 192 + 'px';
+  } else {
+    document.documentElement.style.fontSize = ((Width / 375) * 100) + 'px';
+  }
+  window.onresize = function () {
+    var changeWidth = window.innerWidth;
+    if (changeWidth > 720) {
+      document.documentElement.style.fontSize = 192 + 'px';
+    } else {
+      document.documentElement.style.fontSize = ((changeWidth / 375) * 100) + 'px';
+    }
+  };
+</script>
+<style>
+  html,
+  body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+  }
+
+  .content {
+    height: 100%;
+    width: 100%;
+    background: url('https://cp-pig-rich.oss-cn-beijing.aliyuncs.com/assets/bg.png') center center no-repeat;
+    background-size: cover;
+    position: relative;
+  }
+
+  .btn {
+    position: absolute;
+    width: 285px;
+    height: 60px;
+    bottom: 44px;
+    left: 50%;
+    margin-left: -142.5px;
+  }
+
+  .mask {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1001;
+    display: none;
+  }
+
+  .tip {
+    position: absolute;
+    width: 263px;
+    height: 143px;
+    top: 10px;
+    right: 10px;
+    z-index: 1002;
+  }
+</style>
+
+<body>
+  <div class="content">
+    <img class="btn" src="https://cp-pig-rich.oss-cn-beijing.aliyuncs.com/assets/android.png" alt="" onclick="btnClicked()" />
+  </div>
+  <div class="mask">
+    <img class="tip" src="https://cp-pig-rich.oss-cn-beijing.aliyuncs.com/assets/tip.png" alt="" />
+  </div>
+
+  <script>
+    function btnClicked() {
+      if (isWx) {
+        var mask = document.getElementsByClassName('mask')[0];
+        mask.style.display = 'block';
+      } else {
+        if (isAndroid) {
+          window.location.href = 'zdclient://com.cpgroup.zdclient';
+        } else if (isiOS) {
+          window.location.href = 'zdclient://';
+        }
+
+        setTimeout(function() {
+          if (isiOS) { 
+            window.location.href = 'http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=1463945268';
+          } else if (isAndroid) {
+            if (downloadUrl == '') {
+              requestDownloadUrl();
+            }
+            window.location.href = downloadUrl;
+          }
+        }, 2000);
+
+      }
+    }
+  </script>
+</body>
+<script>
+  var u = navigator.userAgent;
+  var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android				
+  var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios
+  var isWx = u.indexOf('MicroMessenger') > -1;  //wx
+
+  var btn = document.getElementsByClassName('btn')[0];			
+  if (isAndroid) {
+    btn.src = "https://cp-pig-rich.oss-cn-beijing.aliyuncs.com/assets/android.png";
+  } else if (isiOS) {
+    btn.src = "https://cp-pig-rich.oss-cn-beijing.aliyuncs.com/assets/ios.png";
+  }
+
+  var downloadUrl = '';
+  function requestDownloadUrl() {
+    $.get("{{ master_domain }}/api/v1/app/version",
+      {"appid":1, "device":2},
+      function(data, status) {
+        if (status == 'success') {
+          downloadUrl = data.data.url;
+        }
+    });
+  }
+  if (isAndroid) {
+    requestDownloadUrl();
+  }
+</script>
+
+</html>
